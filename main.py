@@ -46,7 +46,13 @@ async def on_message(message):
     if message.author.bot:
         return
     if client.user.mentioned_in(message):
-        wa_text = f"🔔 *Discord zmínka*\n👤: {message.author.display_name}\n💬: {message.clean_content}"
+        wa_text = (
+    f"📢 *@všichni* \n"  # Zkusíme tuhle zkratku
+    f"⚠️ *DŮLEŽITÉ SDĚLENÍ Z DISCORDU*\n"
+    f"━━━━━━━━━━━━━━━━━━━━\n"
+    f"👤 {message.author.display_name}: {message.clean_content}\n\n"
+    f"🔗 Odkaz: {message.jump_url}"
+)
         greenAPI.sending.sendMessage(WA_GROUP_ID, wa_text)
 
 # Spuštění webu a bota
