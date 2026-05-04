@@ -34,6 +34,11 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
+    # Nastaví aktivitu (např. Sleduje WhatsApp)
+    await client.change_presence(
+        status=discord.Status.online, 
+        activity=discord.Activity(type=discord.ActivityType.watching, name="WhatsApp")
+    )
     print(f'Bot jede jako {client.user}')
 
 @client.event
