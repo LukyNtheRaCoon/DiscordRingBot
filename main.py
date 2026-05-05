@@ -45,14 +45,20 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
+    
     if client.user.mentioned_in(message):
+        # Sestavení zprávy, která bije do očí
         wa_text = (
-    f"📢 *@všichni* \n"  # Zkusíme tuhle zkratku
-    f"⚠️ *DŮLEŽITÉ SDĚLENÍ Z DISCORDU*\n"
-    f"━━━━━━━━━━━━━━━━━━━━\n"
-    f"👤 {message.author.display_name}: {message.clean_content}\n\n"
-    f"🔗 Odkaz: {message.jump_url}"
-)
+            "🚨 *POZOR – DISCORD ZMÍNKA* 🚨\n"
+            "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
+            f"👤 *KDO:* {message.author.display_name}\n"
+            f"💬 *TEXT:* {message.clean_content}\n\n"
+            "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+            f"🔗 *ODKAZ NA ZPRÁVU:*\n"
+            f"{message.jump_url}\n\n"
+            "📢 *@všichni prosím čtěte!*" # Aspoň vizuálně
+        )
+        
         greenAPI.sending.sendMessage(WA_GROUP_ID, wa_text)
 
 # Spuštění webu a bota
