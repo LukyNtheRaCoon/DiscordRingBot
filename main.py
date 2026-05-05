@@ -2,44 +2,28 @@ import discord
 import os
 from dotenv import load_dotenv
 from whatsapp_api_client_python import API
-from flask import Flask
-from threading import Thread
 
-# --- MINI WEB SERVER PRO RENDER ---
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Bot is alive!"
-
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
-# ----------------------------------
-
+# Načtení souboru .env
 load_dotenv()
 
+# Načtení proměnných z prostředí
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 ID_INSTANCE = os.getenv('ID_INSTANCE')
 API_TOKEN = os.getenv('API_TOKEN')
 WA_GROUP_ID = os.getenv('WA_GROUP_ID')
 
+# Inicializace WhatsApp API
 greenAPI = API.GreenApi(ID_INSTANCE, API_TOKEN)
+
+# Inicializace Discord Bota
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    # Nastaví aktivitu (např. Sleduje WhatsApp)
-    await client.change_presence(
-        status=discord.Status.online, 
-        activity=discord.Activity(type=discord.ActivityType.watching, name="WhatsApp")
-    )
-    print(f'Bot jede jako {client.user}')
+    print(f'Bot běží! Přihlášen jako {client.user}')
+    print('Hlídám zmínky...')
 
 @client.event
 async def on_message(message):
@@ -47,7 +31,6 @@ async def on_message(message):
         return
     
     if client.user.mentioned_in(message):
-        # Sestavení zprávy, která bije do očí
         wa_text = (
             "🚨 *POZOR – DISCORD ZMÍNKA* 🚨\n"
             "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
@@ -56,11 +39,9 @@ async def on_message(message):
             "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
             f"🔗 *ODKAZ NA ZPRÁVU:*\n"
             f"{message.jump_url}\n\n"
-            "📢 *@všichni prosím čtěte!*" # Aspoň vizuálně
+            "📢 *@všichni prosím čtěte!*"
         )
         
         greenAPI.sending.sendMessage(WA_GROUP_ID, wa_text)
 
-# Spuštění webu a bota
-keep_alive()
 client.run(DISCORD_TOKEN)
